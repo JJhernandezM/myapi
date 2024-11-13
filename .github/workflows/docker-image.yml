@@ -1,5 +1,7 @@
 name: Docker Image CI
 
+name: Docker Image CI
+
 on:
   push:
     branches:
@@ -18,16 +20,11 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Debug GITHUB_SHA
-        run: |
-          # Verificar si GITHUB_SHA tiene un valor
-          echo "GITHUB_SHA is: ${GITHUB_SHA}"
-      
       - name: Build Docker Image
         run: |
-          # Crear un tag basado en el commit hash
-          IMAGE_TAG=jonso18/my-api:${GITHUB_SHA}
-          echo "Building Docker image with tag: $IMAGE_TAG"  # Verificar el valor de IMAGE_TAG
+          # Tag de la imagen como 'latest'
+          IMAGE_TAG=jonso18/my-api:latest
+          echo "Building Docker image with tag: $IMAGE_TAG"
           # Construir la imagen Docker
           docker build -t $IMAGE_TAG .
       
@@ -39,13 +36,13 @@ jobs:
             exit 1
           fi
           # Publicar la imagen Docker a DockerHub
-          echo "Pushing Docker image: $IMAGE_TAG"  # Verificar que el valor sea correcto
+          echo "Pushing Docker image: $IMAGE_TAG"
           docker push $IMAGE_TAG
 
       - name: Update Kubernetes Deployment YAML
         run: |
           # Actualizar el archivo deployment.yaml con el nuevo tag
-          IMAGE_TAG=jonso18/my-api:${GITHUB_SHA}
+          IMAGE_TAG=jonso18/my-api:latest
           sed -i 's|image: jonso18/my-api:.*|image: '"$IMAGE_TAG"'|' k8s/deployment.yaml
 
       - name: Commit and push updated deployment YAML
@@ -55,6 +52,5 @@ jobs:
           git config --global user.email "actions@github.com"
           # Hacer el commit del cambio en deployment.yaml
           git add k8s/deployment.yaml
-          git commit -m "Update image tag to ${GITHUB_SHA}"
+          git commit -m "Update image tag to latest"
           git push
-          
