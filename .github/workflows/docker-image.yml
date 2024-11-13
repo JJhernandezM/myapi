@@ -36,8 +36,8 @@ jobs:
       - name: Commit and push updated deployment YAML
         run: |
           # Configurar el usuario de git para hacer el commit
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
+          git config --global user.name "john hernandez"
+          git config --global user.email "jonso18@gmail.com"
           # Hacer el commit del cambio en deployment.yaml
           git add k8s/deployment.yaml
           git commit -m "Update image tag to latest"
