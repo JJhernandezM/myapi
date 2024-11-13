@@ -1,5 +1,7 @@
 name: Docker Image CI
 
+name: Docker Image CI
+
 on:
   push:
     branches:
@@ -20,28 +22,18 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          # Tag de la imagen como 'latest'
-          IMAGE_TAG=jonso18/my-api:latest
-          echo "Building Docker image with tag: $IMAGE_TAG"
-          # Construir la imagen Docker
-          docker build -t $IMAGE_TAG .
+          # Construir la imagen Docker con el tag 'latest'
+          docker build -t jonso18/my-api:latest .
       
       - name: Push Docker Image
         run: |
-          # Verificar que el tag no esté vacío antes de intentar subir la imagen
-          if [ -z "$IMAGE_TAG" ]; then
-            echo "Error: IMAGE_TAG is empty"
-            exit 1
-          fi
-          # Publicar la imagen Docker a DockerHub
-          echo "Pushing Docker image: $IMAGE_TAG"
-          docker push $IMAGE_TAG
+          # Publicar la imagen Docker a DockerHub con el tag 'latest'
+          docker push jonso18/my-api:latest
 
       - name: Update Kubernetes Deployment YAML
         run: |
-          # Actualizar el archivo deployment.yaml con el nuevo tag
-          IMAGE_TAG=jonso18/my-api:latest
-          sed -i 's|image: jonso18/my-api:.*|image: '"$IMAGE_TAG"'|' k8s/deployment.yaml
+          # Actualizar el archivo deployment.yaml con el tag 'latest'
+          sed -i 's|image: jonso18/my-api:.*|image: jonso18/my-api:latest|' k8s/deployment.yaml
 
       - name: Commit and push updated deployment YAML
         run: |
