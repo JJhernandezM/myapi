@@ -37,8 +37,8 @@ jobs:
         run: |
           # Configurar el usuario de git para hacer el commit
           git config --global user.name "John Hernandez"
-          git config --global user.email "***@gmail.com"
-          # Forzar el commit de los cambios, incluso si no hay diferencias
+          git config --global user.email "jonso18@gmail.com"
+          # Asegurarse de que siempre haya un commit, incluso si no hay cambios reales
           git add k8s/deployment.yaml
-          git commit --amend --no-edit -m "Force update image tag to latest"
-          git push --force
+          git commit -m "Force update image tag to latest"
+          git push
