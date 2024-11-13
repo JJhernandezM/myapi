@@ -18,6 +18,11 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      - name: Debug GITHUB_SHA
+        run: |
+          # Verificar si GITHUB_SHA tiene un valor
+          echo "GITHUB_SHA is: ${GITHUB_SHA}"
+      
       - name: Build Docker Image
         run: |
           # Crear un tag basado en el commit hash
@@ -52,3 +57,4 @@ jobs:
           git add k8s/deployment.yaml
           git commit -m "Update image tag to ${GITHUB_SHA}"
           git push
+          
