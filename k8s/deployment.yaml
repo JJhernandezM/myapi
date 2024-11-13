@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: my-api
-          image: my-dockerhub-user/my-api  # Este valor se actualizará con el nuevo tag
+          image: jonso18/my-api:latest
           ports:
             - containerPort: 3000
           env:
