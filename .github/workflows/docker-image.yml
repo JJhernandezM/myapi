@@ -18,20 +18,37 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      - name: Get and increment version
+        id: version
+        run: |
+          # Leer el número de versión desde un archivo, si no existe lo crea
+          VERSION_FILE="version.txt"
+          if [ ! -f $VERSION_FILE ]; then
+            echo "1.0.0" > $VERSION_FILE
+          fi
+          # Incrementar el número de versión (simplemente aumentamos el patch)
+          VERSION=$(cat $VERSION_FILE)
+          IFS='.' read -r -a VERSION_PARTS <<< "$VERSION"
+          PATCH=$((VERSION_PARTS[2]+1))
+          NEW_VERSION="${VERSION_PARTS[0]}.${VERSION_PARTS[1]}.$PATCH"
+          echo "VERSION=$NEW_VERSION" >> $GITHUB_ENV
+          echo $NEW_VERSION > $VERSION_FILE
+          echo "New version is $NEW_VERSION"
+
       - name: Build Docker Image
         run: |
-          # Construir la imagen Docker con el tag 'latest'
-          docker build -t jonso18/my-api:latest .
-      
+          # Construir la imagen Docker con el nuevo tag
+          docker build -t jonso18/my-api:${{ env.VERSION }} .
+
       - name: Push Docker Image
         run: |
-          # Publicar la imagen Docker a DockerHub con el tag 'latest'
-          docker push jonso18/my-api:latest
+          # Publicar la imagen Docker a DockerHub con el nuevo tag
+          docker push jonso18/my-api:${{ env.VERSION }}
 
       - name: Update Kubernetes Deployment YAML
         run: |
-          # Actualizar el archivo deployment.yaml con el tag 'latest'
-          sed -i 's|image: jonso18/my-api:.*|image: jonso18/my-api:latest|' k8s/deployment.yaml
+          # Actualizar el archivo deployment.yaml con el nuevo tag
+          sed -i 's|image: jonso18/my-api:.*|image: jonso18/my-api:${{ env.VERSION }}|' k8s/deployment.yaml
 
       - name: Commit and push updated deployment YAML
         run: |
@@ -39,6 +56,6 @@ jobs:
           git config --global user.name "John Hernandez"
           git config --global user.email "jonso18@gmail.com"
           # Asegurarse de que siempre haya un commit, incluso si no hay cambios reales
-          git add k8s/deployment.yaml
-          git commit -m "Force update image tag to latest"
+          git add k8s/deployment.yaml version.txt
+          git commit -m "Update image tag to ${{ env.VERSION }}"
           git push
