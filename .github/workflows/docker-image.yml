@@ -41,4 +41,5 @@ jobs:
           # Forzar el commit de los cambios, incluso si no hay diferencias
           git add k8s/deployment.yaml
           git commit -m "Force update image tag to latest"
+          
           git push
